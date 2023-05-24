@@ -10,9 +10,9 @@ class Data extends CI_Controller
 {
 	public function save()
 	{
-		if ($this->input->get('ketinggian') <= 12) {
+		if ($this->input->get('ketinggian') < 12) {
 			$status = "AMAN";
-		} else if ($this->input->get('ketinggian') >= 13 && $this->input->get('ketinggian') <= 17) {
+		} else if ($this->input->get('ketinggian') >= 12 && $this->input->get('ketinggian') <= 17) {
 			$status = "AWAS";
 		} else {
 			$status = "WASPADA";

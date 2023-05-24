@@ -23,7 +23,7 @@ int tinggiBox = 22;
 String host = "http://192.168.156.185/banjir/data";
 String simpanSensor = host + "/save?ketinggian=";
 
-String respon = "";
+String respon = "", relay;
 
 String data;
 char c;
@@ -49,6 +49,10 @@ void IRAM_ATTR pulseCounter()
 {
   pulseCount++;
 }
+
+#define pinSelenoid D5
+#define relay_off HIGH
+#define relay_on LOW
 
 void setup() {
   // put your setup code here, to run once:
@@ -87,6 +91,9 @@ void setup() {
 
   pinMode(buzzer, OUTPUT);
 
+  pinMode(pinSelenoid, OUTPUT);
+  digitalWrite(pinSelenoid, relay_off);
+
   tinggiTimer.setInterval(2000);
 
   pulseCount = 0;
@@ -108,28 +115,36 @@ void loop() {
   Serial.println();
   
   if(tinggiAir < 12) {
-      Serial.println("AMAN");
-    } else if(tinggiAir >= 12 && tinggiAir <= 17) {
-      Serial.println("SIAGA");
-      digitalWrite(buzzer, HIGH);
-      delay(1000);
-      digitalWrite(buzzer, LOW);
-      delay(500);
-      digitalWrite(buzzer, HIGH);
-      delay(1000);
-      digitalWrite(buzzer, LOW);
-    } else {
-      Serial.println("WASPADA");
-      digitalWrite(buzzer, HIGH);
-      delay(2000);
-      digitalWrite(buzzer, LOW);
-      delay(100);
-      digitalWrite(buzzer, HIGH);
-      delay(2000);
-      digitalWrite(buzzer, LOW);
-      delay(100);
-    }
+    Serial.println("AMAN");
+  } else if(tinggiAir >= 12 && tinggiAir <= 17) {
+    Serial.println("SIAGA");
+    digitalWrite(buzzer, HIGH);
+    delay(1000);
+    digitalWrite(buzzer, LOW);
+    delay(500);
+    digitalWrite(buzzer, HIGH);
+    delay(1000);
+    digitalWrite(buzzer, LOW);
+  } else {
+    Serial.println("WASPADA");
+    digitalWrite(buzzer, HIGH);
+    delay(2000);
+    digitalWrite(buzzer, LOW);
+    delay(100);
+    digitalWrite(buzzer, HIGH);
+    delay(2000);
+    digitalWrite(buzzer, LOW);
+    delay(100);
+  }
 
+  if (relay == "ON") {
+    Serial.println("Selenoid ON");
+    digitalWrite(pinSelenoid, relay_on);
+  } else {
+    Serial.println("Selenoid OFF");
+    digitalWrite(pinSelenoid, relay_off);
+  }
+  
   delay(2000);
 }
 
@@ -176,7 +191,9 @@ void kirimSensor() {
       if (httpCode == HTTP_CODE_OK) // code 200
       {
         respon = http.getString();
-        USE_SERIAL.println("Respon kirim sensor : " + respon);
+        relay = getValue(respon, '#', 1);
+        
+        USE_SERIAL.println("Respon kirim sensor : " + getValue(respon, '#', 0));
       }
     }
     else
@@ -215,4 +232,21 @@ void bacaTinggi()
   
     tinggiTimer.reset();
    }
+}
+
+String getValue(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+ 
+  for(int i=0; i <= maxIndex && found <= index; i++){
+    if(data.charAt(i) == separator || i == maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  } 
+ 
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }

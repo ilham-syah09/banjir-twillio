@@ -27,23 +27,23 @@ class Data extends CI_Controller
 			'status' 	 => $status,
 		];
 
+		$setting = $this->db->get('setting')->row();
+
 		if ($data) {
 			$this->db->insert('sensor', $data);
 
-			$notif = $this->db->get('notif')->row();
-
-			if ($notif->status != $status) {
+			if ($setting->status != $status) {
 				$this->_sendMsg($ketinggian, $status);
 
 				$this->db->where('id', 1);
-				$this->db->update('notif', [
+				$this->db->update('setting', [
 					'status' => $status
 				]);
 			}
 
-			echo 'Data berhasil disimpan';
+			echo 'Data berhasil disimpan#' . $setting->relay . '#ok';
 		} else {
-			echo 'Data gagal disimpan!';
+			echo 'Data gagal disimpan!#' . $setting->relay . '#ok';
 		}
 	}
 

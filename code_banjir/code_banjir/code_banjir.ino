@@ -12,15 +12,24 @@ HTTPClient http;
 
 SimpleTimer tinggiTimer;
 
-// deklarasi pin Ultrasonik
-#define tinggiPinTrigger D2
-#define tinggiPinEcho D1
+// lcd
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-#define buzzer D0
+// SDA ---------------> D2
+// SCL ---------------> D1
+// VCC ---------------> VV
+// GND ---------------> GND
+
+// deklarasi pin Ultrasonik
+#define tinggiPinTrigger D0
+#define tinggiPinEcho D3
+
+#define buzzer D7
 
 int tinggiBox = 22;
 
-String host = "http://192.168.156.185/banjir/data";
+String host = "http://192.168.132.185/banjir/data";
 String simpanSensor = host + "/save?ketinggian=";
 
 String respon = "", relay;
@@ -29,7 +38,7 @@ String data;
 char c;
 
 #define LED_BUILTIN 16
-#define SENSOR D4
+#define SENSOR D2
 
 long currentMillis = 0;
 long previousMillis = 0;
@@ -45,14 +54,14 @@ float flowLitres;
 
 long duration, jarak, tinggiAir;
 
+#define pinSelenoid D5
+#define relay_off HIGH
+#define relay_on LOW
+
 void IRAM_ATTR pulseCounter()
 {
   pulseCount++;
 }
-
-#define pinSelenoid D5
-#define relay_off HIGH
-#define relay_on LOW
 
 void setup() {
   // put your setup code here, to run once:
@@ -76,14 +85,32 @@ void setup() {
     {
       USE_SERIAL.println("Wifi Connected");
       USE_SERIAL.flush();
+      
+      lcd.setCursor(6, 0);
+      lcd.print("WiFi");
+      lcd.setCursor(2, 1);
+      lcd.print("CONNECTED!!!");
+      
       delay(1000);
     }
     else
     {
+      lcd.setCursor(6, 0);
+      lcd.print("WiFi");
+      lcd.setCursor(0, 1);
+      lcd.print("NOT CONNECTED");
+      
       Serial.println("Wifi not Connected");
       delay(1000);
     }
   }
+
+  lcd.clear();
+  
+  lcd.setCursor(3, 0);
+  lcd.print("MONITORING");
+  lcd.setCursor(5, 1);
+  lcd.print("BANJIR");
 
   //  deklarasi pin ultrasonik
   pinMode(tinggiPinTrigger, OUTPUT);
@@ -105,6 +132,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(SENSOR), pulseCounter, FALLING);
 
   delay(500);
+  lcd.clear();
 }
 void loop() {
   
@@ -118,22 +146,22 @@ void loop() {
     Serial.println("AMAN");
   } else if(tinggiAir >= 12 && tinggiAir <= 17) {
     Serial.println("SIAGA");
-    digitalWrite(buzzer, HIGH);
+    digitalWrite(buzzer, relay_on);
     delay(1000);
-    digitalWrite(buzzer, LOW);
+    digitalWrite(buzzer, relay_off);
     delay(500);
-    digitalWrite(buzzer, HIGH);
+    digitalWrite(buzzer, relay_on);
     delay(1000);
-    digitalWrite(buzzer, LOW);
+    digitalWrite(buzzer, relay_off);
   } else {
     Serial.println("WASPADA");
-    digitalWrite(buzzer, HIGH);
+    digitalWrite(buzzer, relay_on);
     delay(2000);
-    digitalWrite(buzzer, LOW);
+    digitalWrite(buzzer, relay_off);
     delay(100);
-    digitalWrite(buzzer, HIGH);
+    digitalWrite(buzzer, relay_on);
     delay(2000);
-    digitalWrite(buzzer, LOW);
+    digitalWrite(buzzer, relay_off);
     delay(100);
   }
 
@@ -175,7 +203,7 @@ void readWaterFlow()
 void kirimSensor() {
   if ((WiFiMulti.run() == WL_CONNECTED))
   {
-    Serial.println(simpanSensor + (String) jarak);
+    Serial.println(simpanSensor + (String) tinggiAir + "&debit=" + (String) flowRate);
 
     Serial.println();
     

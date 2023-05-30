@@ -34,7 +34,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-box"></i>
+                    <!-- <i class="fas fa-box"></i> -->
                 </div>
                 <div class="sidebar-brand-text mx-3">Monitoring</div>
             </a>
@@ -63,10 +63,16 @@
                     <span>Rekap</span></a>
             </li>
 
-            <li class="nav-item <?= ($this->uri->segment(1) == 'admin' ? 'active' : ''); ?>">
-                <a class="nav-link" href="<?= base_url('admin'); ?>">
+            <li class="nav-item <?= ($this->uri->segment(1) == 'profile' ? 'active' : ''); ?>">
+                <a class="nav-link" href="<?= base_url('profile'); ?>">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>Admin</span></a>
+                    <span>Profile</span></a>
+            </li>
+
+            <li class="nav-item <?= ($this->uri->segment(1) == 'setting' ? 'active' : ''); ?>">
+                <a class="nav-link" href="<?= base_url('setting'); ?>">
+                    <i class="fas fa-fw fa-asterisk"></i>
+                    <span>Setting</span></a>
             </li>
 
             <li class="nav-item">
@@ -230,7 +236,7 @@
         $(document).ready(function() {
             var table = $('#examples').DataTable({
                 lengthChange: false,
-                pageLength: 25,
+                pageLength: 10,
                 buttons: [{
                         extend: 'print',
                         exportOptions: {

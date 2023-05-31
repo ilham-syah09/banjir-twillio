@@ -2,8 +2,6 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-require_once 'twilio-php-app/vendor/autoload.php';
-
 use Twilio\Rest\Client;
 
 class Data extends CI_Controller
@@ -50,7 +48,7 @@ class Data extends CI_Controller
 	private function _sendMsg($a, $b)
 	{
 		$sid    = "AC46a1d0816ba31d762db50ae4c65ee3bb";
-		$token  = "8dd903331a722915ca3e26993b3dbb5a";
+		$token  = "6fb7f33855d754a3753de783a7573552";
 		$twilio = new Client($sid, $token);
 
 		$to = "whatsapp:+62895386907272"; // silahkan diganti

@@ -22,14 +22,15 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 // GND ---------------> GND
 
 // deklarasi pin Ultrasonik
-#define tinggiPinTrigger D0
-#define tinggiPinEcho D3
+#define tinggiPinTrigger D8
+#define tinggiPinEcho D7
 
-#define buzzer D7
+#define buzzer D0
 
-int tinggiBox = 22;
+// setting ketinggian
+int tinggiBox = 60;
 
-String host = "http://192.168.132.185/banjir/data";
+String host = "http://192.168.181.185/banjir/data";
 String simpanSensor = host + "/save?ketinggian=";
 
 String respon = "", relay;
@@ -38,7 +39,7 @@ String data;
 char c;
 
 #define LED_BUILTIN 16
-#define SENSOR D2
+#define SENSOR D4
 
 long currentMillis = 0;
 long previousMillis = 0;
@@ -66,6 +67,8 @@ void IRAM_ATTR pulseCounter()
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  lcd.init();
+  lcd.backlight();
 
   USE_SERIAL.begin(115200);
   USE_SERIAL.setDebugOutput(false);
@@ -131,7 +134,7 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(SENSOR), pulseCounter, FALLING);
 
-  delay(500);
+  delay(2000);
   lcd.clear();
 }
 void loop() {
@@ -141,29 +144,6 @@ void loop() {
   kirimSensor();
 
   Serial.println();
-  
-  if(tinggiAir < 12) {
-    Serial.println("AMAN");
-  } else if(tinggiAir >= 12 && tinggiAir <= 17) {
-    Serial.println("SIAGA");
-    digitalWrite(buzzer, relay_on);
-    delay(1000);
-    digitalWrite(buzzer, relay_off);
-    delay(500);
-    digitalWrite(buzzer, relay_on);
-    delay(1000);
-    digitalWrite(buzzer, relay_off);
-  } else {
-    Serial.println("WASPADA");
-    digitalWrite(buzzer, relay_on);
-    delay(2000);
-    digitalWrite(buzzer, relay_off);
-    delay(100);
-    digitalWrite(buzzer, relay_on);
-    delay(2000);
-    digitalWrite(buzzer, relay_off);
-    delay(100);
-  }
 
   if (relay == "ON") {
     Serial.println("Selenoid ON");
@@ -173,7 +153,7 @@ void loop() {
     digitalWrite(pinSelenoid, relay_off);
   }
   
-  delay(2000);
+  delay(1000);
 }
 
 void readWaterFlow()
@@ -254,9 +234,55 @@ void bacaTinggi()
       
       tinggiAir = 0;
     }
+
+    lcd.clear();
     
     Serial.print("Ketinggian Air : ");
     Serial.println(tinggiAir);
+
+    lcd.setCursor(0, 0);
+    lcd.print("TINGGI AIR:");
+    lcd.setCursor(12, 0);
+    lcd.print(tinggiAir);
+    delay(1000);
+
+    // kondisi status aman, siaga dan waspada
+  if(tinggiAir <= 30) {
+    Serial.println("AMAN");
+    
+    lcd.setCursor(0, 1);
+    lcd.print("STATUS: ");
+    lcd.setCursor(8, 1);
+    lcd.print("AMAN");
+    delay(1000);
+    
+  } else if(tinggiAir > 31 && tinggiAir <= 45) {
+    Serial.println("SIAGA");
+
+    lcd.setCursor(0, 1);
+    lcd.print("STATUS: ");
+    lcd.setCursor(8, 1);
+    lcd.print("SIAGA");
+    delay(1000);
+  } else {
+    Serial.println("WASPADA");
+    
+    lcd.setCursor(0, 1);
+    lcd.print("STATUS: ");
+    lcd.setCursor(8, 1);
+    lcd.print("WASPADA");
+    delay(1000);
+    // mengulang buzzer sebanyak 5 kali
+ 
+    digitalWrite(buzzer, relay_on);
+    delay(500);
+    digitalWrite(buzzer, relay_off);
+    delay(100);
+    
+    Serial.println("Selenoid ON");
+    digitalWrite(pinSelenoid, relay_on);
+     
+  }
   
     tinggiTimer.reset();
    }

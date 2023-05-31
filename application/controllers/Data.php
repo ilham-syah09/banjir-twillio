@@ -53,7 +53,7 @@ class Data extends CI_Controller
 		$token  = "8dd903331a722915ca3e26993b3dbb5a";
 		$twilio = new Client($sid, $token);
 
-		$to = "whatsapp:+6287794889005"; // silahkan diganti
+		$to = "whatsapp:+62895386907272"; // silahkan diganti
 		$from = "whatsapp:+14155238886"; // jangan diganti
 		$body = 'Ketinggian Air : ' . $a . ' cm, Status : ' . $b;
 

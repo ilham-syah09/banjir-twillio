@@ -45,10 +45,15 @@ class Data extends CI_Controller
 		}
 	}
 
+	public function a()
+	{
+		$this->_sendMsg(23, 'Waspada');
+	}
+
 	private function _sendMsg($a, $b)
 	{
 		$sid    = "AC46a1d0816ba31d762db50ae4c65ee3bb";
-		$token  = "6fb7f33855d754a3753de783a7573552";
+		$token  = "1072178e45bdf02cd36933c2a838451c";
 		$twilio = new Client($sid, $token);
 
 		$to = "whatsapp:+62895386907272"; // silahkan diganti

@@ -34,7 +34,8 @@ class Setting extends CI_Controller
     public function changeSelenoid()
     {
         $data = [
-            'relay'    => $this->input->post('relay')
+            'relay'    => $this->input->post('relay'),
+            'noTwillio' => $this->input->post('noTwillio')
         ];
 
         $this->db->where('id', $this->input->post('id'));

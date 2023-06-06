@@ -30,7 +30,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 // setting ketinggian
 int tinggiBox = 60;
 
-String host = "http://192.168.181.185/banjir/data";
+String host = "http://nizar.sewadomain.my.id/data";
 String simpanSensor = host + "/save?ketinggian=";
 
 String respon = "", relay;

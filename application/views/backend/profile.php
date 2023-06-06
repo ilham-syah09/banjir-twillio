@@ -24,7 +24,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="<?= base_url('profile/edit'); ?>" method="post" enctype="multipart/form-data">
+                <form action="<?= base_url('profile/editprofile'); ?>" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?= $this->dt_admin->id; ?>">
                     <input type="hidden" name="previmage" value="<?= $this->dt_admin->foto; ?>">
                     <div class="form-group">
@@ -41,7 +41,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </form>
             </div>

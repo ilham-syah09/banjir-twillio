@@ -68,12 +68,12 @@ class Profile extends CI_Controller
 
             if (!$this->upload->do_upload('foto')) {
                 $this->session->set_flashdata('flash-error', $this->upload->display_errors());
-                redirect('dashboard/profile', 'refresh');
+                redirect('profile', 'refresh');
             } else {
                 $upload_data = $this->upload->data();
 
                 $this->db->where('id', $id);
-                $profile = $this->db->get('profile')->row();
+                $profile = $this->db->get('admin')->row();
 
                 if ($this->input->post('password')) {
                     $data = [
@@ -113,11 +113,11 @@ class Profile extends CI_Controller
         }
 
         $this->db->where('id', $id);
-        $this->db->update('profile', $data);
+        $this->db->update('admin', $data);
 
         $this->session->set_flashdata('flash-sukses', 'Sukses edit data');
 
-        redirect('dashboard/profile');
+        redirect('profile');
     }
 }
 

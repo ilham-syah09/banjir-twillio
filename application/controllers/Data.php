@@ -52,11 +52,13 @@ class Data extends CI_Controller
 
 	private function _sendMsg($a, $b)
 	{
+		$query = $this->db->get('setting')->row();
+
 		$sid    = "AC46a1d0816ba31d762db50ae4c65ee3bb";
 		$token  = "1072178e45bdf02cd36933c2a838451c";
 		$twilio = new Client($sid, $token);
 
-		$to = "whatsapp:+62895386907272"; // silahkan diganti
+		$to = "whatsapp:+62" . $query->noTwillio; // silahkan diganti
 		$from = "whatsapp:+14155238886"; // jangan diganti
 		$body = 'Ketinggian Air : ' . $a . ' cm, Status : ' . $b;
 
